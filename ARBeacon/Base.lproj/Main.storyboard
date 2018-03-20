@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Knt-SW-wV1">
+    <device id="retina4_7" orientation="landscape">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="ARBeacon" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="667" height="375"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Beacons nearby" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tOx-3u-NR2">
+                                <rect key="frame" x="232.5" y="96" width="202" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="tOx-3u-NR2" secondAttribute="height" multiplier="101:15" id="0Pg-1H-2HO"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" weight="thin" pointSize="25"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CUT-rW-3xl">
+                                <rect key="frame" x="316.5" y="296" width="34" height="30"/>
+                                <state key="normal" title="Start"/>
+                                <connections>
+                                    <action selector="startRanging:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Yjj-pF-bEI"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="CUT-rW-3xl" secondAttribute="bottom" constant="49" id="DKo-s8-Btl"/>
+                            <constraint firstItem="CUT-rW-3xl" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="gRH-Ew-Ko5"/>
+                            <constraint firstItem="tOx-3u-NR2" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="64" id="jJS-t9-xXw"/>
+                            <constraint firstItem="tOx-3u-NR2" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="mtU-NV-9x3"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="Bkf-6T-ZAt"/>
+                    <connections>
+                        <outlet property="status" destination="tOx-3u-NR2" id="SJD-ew-FzH"/>
+                        <segue destination="JPt-Dx-Hsj" kind="show" identifier="arscenekit" id="Ovy-dF-jrQ"/>
+                        <segue destination="5Qm-Yf-x8l" kind="show" identifier="sceneVC" id="KJJ-PR-qiE"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="456.80000000000001" y="118.29085457271366"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="7jm-ZU-ohm">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Knt-SW-wV1" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="AyM-p8-ol9">
+                        <rect key="frame" x="0.0" y="0.0" width="667" height="32"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="Cef-U2-bIo"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Tc8-mK-Vhq" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-337" y="118"/>
+        </scene>
+        <!--Scene Kit View Controller-->
+        <scene sceneID="tc7-Ov-PAo">
+            <objects>
+                <viewController id="JPt-Dx-Hsj" customClass="ARSceneKitViewController" customModule="ARBeacon" customModuleProvider="target" sceneMemberID="viewController">
+                    <arscnView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="5f1-gS-9xY">
+                        <rect key="frame" x="0.0" y="0.0" width="667" height="375"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    </arscnView>
+                    <connections>
+                        <outlet property="sceneView" destination="5f1-gS-9xY" id="OSs-st-3SO"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="28G-xR-1lc" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1108" y="118"/>
+        </scene>
+        <!--Scene View Controller-->
+        <scene sceneID="zlH-0u-8uz">
+            <objects>
+                <viewController id="5Qm-Yf-x8l" customClass="SceneViewController" customModule="ARBeacon" customModuleProvider="target" sceneMemberID="viewController">
+                    <arscnView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="WkC-bx-McC">
+                        <rect key="frame" x="0.0" y="0.0" width="667" height="375"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    </arscnView>
+                    <connections>
+                        <outlet property="sceneView" destination="WkC-bx-McC" id="A7c-sx-ieC"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="3X2-ZZ-2Nz" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1107.7961019490256" y="816.79999999999995"/>
+        </scene>
+    </scenes>
+</document>
