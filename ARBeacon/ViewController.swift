@@ -29,7 +29,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         status.text = "Ranging Beacon"
-        self.performSegue(withIdentifier: "sceneVC", sender: self)
 
     }
 

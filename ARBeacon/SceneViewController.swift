@@ -73,7 +73,7 @@ class SceneViewController: UIViewController {
         
         let box3 = SCNBox(width: 0.4, height: 0.4, length: 0.15, chamferRadius: 0.0)
         let imageToBox3 = SCNMaterial()
-        //imageToBox3.isDoubleSided = true
+        imageToBox3.isDoubleSided = true
         let imageDisplay3 = UIImage(named: "Top")
         imageToBox3.diffuse.contents = imageDisplay3
         box3.materials = [imageToBox3, imageToBox3, imageToBox3, imageToBox3, imageToBox3, imageToBox3]
@@ -88,11 +88,12 @@ class SceneViewController: UIViewController {
         imageToBox4.diffuse.contents = imageDisplay4
         box4.materials = [imageToBox4, imageToBox4, imageToBox4, imageToBox4, imageToBox4, imageToBox4]
         boxNode4 = SCNNode(geometry: box4)
-        boxNode4.position = SCNVector3(0.0,0.4,-2.0)
+        boxNode4.position = SCNVector3(0.0,0.3,-2.0)
+        boxNode4.name = "TopImage"
         sceneView.pointOfView?.addChildNode(boxNode4)
         
         
-        sceneView.autoenablesDefaultLighting = true
+        //sceneView.autoenablesDefaultLighting = true
         //sceneView.allowsCameraControl = true
 
     }
@@ -120,6 +121,9 @@ class SceneViewController: UIViewController {
             derivedBox.height = 0.8
             derivedBox.width = 0.8
             //tappedNode.pivot = SCNMatrix4MakeTranslation(0, -Float(derivedBox.height/2), 0) // new height
+            if tappedNode.name == "TopImage" {
+                tappedNode.position.y = 0.2
+            }
             
             if let exBox = expandedBox {
                 exBox.height = 0.4
