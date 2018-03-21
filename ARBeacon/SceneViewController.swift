@@ -93,7 +93,7 @@ class SceneViewController: UIViewController {
         
         
         sceneView.autoenablesDefaultLighting = true
-        sceneView.allowsCameraControl = true
+        //sceneView.allowsCameraControl = true
 
     }
     
