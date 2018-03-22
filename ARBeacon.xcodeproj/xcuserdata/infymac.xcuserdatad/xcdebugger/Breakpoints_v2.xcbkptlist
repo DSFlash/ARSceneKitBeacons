@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ARBeacon/SceneViewController.swift"
-            timestampString = "543399777.922711"
+            timestampString = "543415355.052784"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "155"
-            endingLineNumber = "155"
+            startingLineNumber = "151"
+            endingLineNumber = "151"
             landmarkName = "sceneTapped(sender:)"
             landmarkType = "7">
          </BreakpointContent>

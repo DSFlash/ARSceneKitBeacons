@@ -12,7 +12,7 @@ import CoreLocation
 
 
 class SceneViewController: UIViewController, CLLocationManagerDelegate {
-
+    
     @IBOutlet var sceneView: ARSCNView!
     var boxNode1 : SCNNode!
     var boxNode2 : SCNNode!
@@ -20,7 +20,7 @@ class SceneViewController: UIViewController, CLLocationManagerDelegate {
     var boxNode4 : SCNNode!
     var expandedBox : SCNBox!
     var locationManager : CLLocationManager!
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -32,14 +32,13 @@ class SceneViewController: UIViewController, CLLocationManagerDelegate {
         //addBox()
         //addTap()
         startRangingBeacons()
-
+        
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         let configuration = ARWorldTrackingConfiguration()
         sceneView.session.run(configuration)
-        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -54,78 +53,65 @@ class SceneViewController: UIViewController, CLLocationManagerDelegate {
     
     //MARK: ARKIT specific methods to add objects
     func addBox() -> Void {
-        let box = SCNBox(width: 0.4, height: 0.4, length: 0.15, chamferRadius: 0.0)
+        
+        let box = SCNBox(width: 0.4, height: 0.4, length: 0.4, chamferRadius: 0.0)
         let imageToBox1 = SCNMaterial()
-        //imageToBox1.isDoubleSided = true
-        let imageDisplay1 = UIImage(named: "Pamp")
+        let imageDisplay1 = UIImage(named: "Bottom")
         imageToBox1.diffuse.contents = imageDisplay1
         box.materials = [imageToBox1]
-        box.name = "Pamp"
+        box.name = "Bottom"
         boxNode1 = SCNNode(geometry: box)
         boxNode1.position = SCNVector3(0,-0.8,-2)
-        let physicsBody = SCNPhysicsBody(
+        /*let physicsBody = SCNPhysicsBody(
             type: .kinematic,
             shape: SCNPhysicsShape(geometry: SCNSphere(radius: 0.1))
         )
-        boxNode1.physicsBody = physicsBody
+        boxNode1.physicsBody = physicsBody*/
         sceneView.pointOfView?.addChildNode(boxNode1)
-
-
-        let box2 = SCNBox(width: 0.4, height: 0.4, length: 0.15, chamferRadius: 0.0)
+        
+        let box2 = SCNBox(width: 0.4, height: 0.4, length: 0.4, chamferRadius: 0.0)
         let imageToBox2 = SCNMaterial()
-        let imageDisplay2 = UIImage(named: "Bottom")
-        //imageToBox2.isDoubleSided = true
+        let imageDisplay2 = UIImage(named: "Right")
         imageToBox2.diffuse.contents = imageDisplay2
         box2.materials = [imageToBox2]
-        box2.name = "Bottom"
+        box2.name = "Right"
         boxNode2 = SCNNode(geometry: box2)
         boxNode2.position = SCNVector3(1.0,0,-2)
         sceneView.pointOfView?.addChildNode(boxNode2)
         
-        let box3 = SCNBox(width: 0.4, height: 0.4, length: 0.15, chamferRadius: 0.0)
+        let box3 = SCNBox(width: 0.4, height: 0.4, length: 0.4, chamferRadius: 0.0)
         let imageToBox3 = SCNMaterial()
-        let imageDisplay3 = UIImage(named: "Top")
+        let imageDisplay3 = UIImage(named: "Left")
         imageToBox3.diffuse.contents = imageDisplay3
         box3.materials = [imageToBox3]
-        box3.name = "Top"
+        box3.name = "Left"
         boxNode3 = SCNNode(geometry: box3)
         boxNode3.position = SCNVector3(-1.0,0,-2)
         sceneView.pointOfView?.addChildNode(boxNode3)
-
-        let box4 = SCNBox(width: 0.4, height: 0.4, length: 0.15, chamferRadius: 0.0)
+        
+        let box4 = SCNBox(width: 0.4, height: 0.4, length: 0.4, chamferRadius: 0.0)
         let imageToBox4 = SCNMaterial()
-        //imageToBox4.isDoubleSided = true
-        let imageDisplay4 = UIImage(named: "BottomNew")
+        let imageDisplay4 = UIImage(named: "Top")
         imageToBox4.diffuse.contents = imageDisplay4
         box4.materials = [imageToBox4]
         box4.name = "TopImage"
-
+        
         boxNode4 = SCNNode(geometry: box4)
         boxNode4.position = SCNVector3(0.0,0.8,-2.0)
         boxNode4.name = "TopImage"
         sceneView.pointOfView?.addChildNode(boxNode4)
-
+        
         SCNTransaction.begin()
         SCNTransaction.animationDuration = 3
         boxNode1.position = SCNVector3(0,-0.4,-2)
         boxNode2.position = SCNVector3(0.8,0,-2)
         boxNode3.position = SCNVector3(-0.8,0,-2)
         boxNode4.position = SCNVector3(0.0,0.3,-2.0)
-
         SCNTransaction.commit()
-        
-//        UIView.animate(withDuration: 2.0, delay: 0.1, options: UIViewAnimationOptions.curveEaseOut, animations: {
-//            self.sceneView.pointOfView?.addChildNode(self.boxNode1)
-//            self.sceneView.pointOfView?.addChildNode(self.boxNode2)
-//            self.sceneView.pointOfView?.addChildNode(self.boxNode3)
-//            self.sceneView.pointOfView?.addChildNode(self.boxNode4)
-//
-//        }, completion: nil)
-
         
         //sceneView.autoenablesDefaultLighting = true
         //sceneView.allowsCameraControl = true
-
+        
     }
     
     //MARK: scene tapped events
@@ -133,6 +119,14 @@ class SceneViewController: UIViewController, CLLocationManagerDelegate {
         
         let gestureRec = UITapGestureRecognizer(target: self, action: #selector(sceneTapped(sender:)))
         sceneView.addGestureRecognizer(gestureRec)
+        
+    }
+    
+    //MARK: scene tapped events
+    func addTapToRotate() -> Void {
+        
+        let gestureToRotate = UIPanGestureRecognizer(target: self, action: #selector(sceneTappedToRotate(sender:)))
+        sceneView.addGestureRecognizer(gestureToRotate)
         
     }
     
@@ -144,24 +138,26 @@ class SceneViewController: UIViewController, CLLocationManagerDelegate {
         if hitResults.count > 0 {
             let tapped = hitResults[0]
             let tappedNode = tapped.node
-
+            
             SCNTransaction.begin()
             SCNTransaction.animationDuration = 2
             let derivedBox:SCNBox = tappedNode.geometry as! SCNBox
             derivedBox.height = 0.8
             derivedBox.width = 0.8
-            
-            //tappedNode.pivot = SCNMatrix4MakeTranslation(0, -Float(derivedBox.height/2), 0) // new height
+            derivedBox.length = 0.8
+
+            tappedNode.rotation = SCNVector4Make(0, 0, 0, 0)
             if tappedNode.name == "TopImage" {
                 tappedNode.position.y = 0.2
             }
-            else if tappedNode.name == "Pamp" {
+            else if tappedNode.name == "Bottom" {
                 tappedNode.position.y = -0.2
             }
             
             if let exBox = expandedBox {
-                    exBox.height = 0.4
-                    exBox.width = 0.4
+                exBox.height = 0.4
+                exBox.width = 0.4
+                exBox.length = 0.4
             }
             SCNTransaction.commit()
             
@@ -171,7 +167,6 @@ class SceneViewController: UIViewController, CLLocationManagerDelegate {
             else {
                 expandedBox = derivedBox
             }
-            
         }
     }
     
@@ -181,50 +176,27 @@ class SceneViewController: UIViewController, CLLocationManagerDelegate {
             let beaconSelected = beacons[0]
             switch beaconSelected.proximity {
             case .near, .immediate, .far:
-                //status.text = "Near Beacon - Opening Scene"
-                //self.view.backgroundColor = UIColor.darkGray
                 print("beacon region")
                 locationManager.stopRangingBeacons(in: region)
-
+                
                 addBox()
                 addTap()
-                
-                /*DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    //self.performSegue(withIdentifier: "arscenekit", sender: self)
-                    self.performSegue(withIdentifier: "sceneVC", sender: self)
-                    //self.status.text = "Stopped ranging"
-                }*/
+                addTapToRotate()
                 
             case .unknown:
-                //status.text = "No Beacons nearby"
-                print("unknown")
-            default:
-                //status.text = "No Beacons nearby"
                 print("unknown")
             }
         }
-        
     }
     
     func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
         print("entered beacon region")
-        //        status.text = "Entered Region - Opening Camera"
-        //
-        //        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-        //            self.performSegue(withIdentifier: "arscenekit", sender: self)
-        //        }
-        //
-        //        let alertView = UIAlertController(title: "Enter Beacon Region", message: "", preferredStyle: .alert)
-        //        let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-        //        alertView.addAction(action)
-        //        present(alertView, animated: true, completion: nil)
-        //
-        //self.view.backgroundColor = UIColor.darkGray
     }
     
     func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
         print("exited beacon region")
-        //self.view.backgroundColor = UIColor.lightGray
+        
+        removeExistingNodesOutOfRegion()
         locationManager.stopMonitoring(for: region)
     }
     
@@ -247,9 +219,38 @@ class SceneViewController: UIViewController, CLLocationManagerDelegate {
         locationManager.startRangingBeacons(in: regionBeacon)
         
     }
-   /* @IBAction func startRanging(_ sender: Any) {
-        startRangingBeacons()
-    }*/
+    
+    func removeExistingNodesOutOfRegion() -> Void {
+        if boxNode4 != nil && boxNode3 != nil && boxNode2 != nil && boxNode1 != nil {
+            boxNode1.removeFromParentNode()
+            boxNode2.removeFromParentNode()
+            boxNode3.removeFromParentNode()
+            boxNode4.removeFromParentNode()
+        }
+    }
+    
+    @objc func sceneTappedToRotate(sender: UIPanGestureRecognizer) {
+        let sceneView = sender.view as! SCNView
+        let tapLoc = sender.location(in: sceneView)
+        let hitResults = sceneView.hitTest(tapLoc, options: [:])
+        if hitResults.count > 0 {
+            let translation = sender.translation(in: sender.view!)
+            
+            let transx = Float(translation.x)
+            let transy = Float(-translation.y)
+            let anglePan = sqrt(pow(transx,2)+pow(transy,2))*(Float)(Double.pi)/180.0
+            var rotVector = SCNVector4()
+            
+            rotVector.x = -transy
+            rotVector.y = transx
+            rotVector.z = 0
+            rotVector.w = anglePan
+            
+            let tapped = hitResults[0]
+            let tappedNode = tapped.node
+            tappedNode.rotation = rotVector
+        }
+    }
     
     
 }

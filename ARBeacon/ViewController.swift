@@ -114,7 +114,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         //startRangingBeacons()
         self.status.text = "Opening Scene"
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
 
             self.performSegue(withIdentifier: "sceneVC", sender: self)
         }
