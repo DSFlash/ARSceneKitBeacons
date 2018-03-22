@@ -22,13 +22,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         locationManager.requestAlwaysAuthorization()
         //self.view.backgroundColor = UIColor.lightGray
 
-        startRangingBeacons()
+        //startRangingBeacons()
 
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        status.text = "Ranging Beacon"
+        status.text = "No Beacons nearby"
 
     }
 
@@ -38,12 +38,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
 
     //MARK: - Localtion manager Delegate methods
-    func locationManager(_ manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], in region: CLBeaconRegion) {
+    /*func locationManager(_ manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], in region: CLBeaconRegion) {
         if beacons.count > 0 {
             let beaconSelected = beacons[0]
             switch beaconSelected.proximity {
             case .near, .immediate:
-                status.text = "Near Beacon - Opening Camera"
+                status.text = "Near Beacon - Opening Scene"
                 //self.view.backgroundColor = UIColor.darkGray
                 print("near")
                 locationManager.stopRangingBeacons(in: region)
@@ -108,9 +108,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         locationManager.startMonitoring(for: regionBeacon)
         locationManager.startRangingBeacons(in: regionBeacon)
         
-    }
+    }*/
+    
     @IBAction func startRanging(_ sender: Any) {
-        startRangingBeacons()
+        //startRangingBeacons()
+        self.status.text = "Opening Scene"
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+
+            self.performSegue(withIdentifier: "sceneVC", sender: self)
+        }
+        
     }
     
 }
