@@ -28,21 +28,21 @@ class SceneViewController: UIViewController, CLLocationManagerDelegate {
         locationManager.delegate = self
         locationManager.requestAlwaysAuthorization()
         
-        // Do any additional setup after loading the view.
-        //addBox()
-        //addTap()
+        //Start Monitoring and ranging beacons
         startRangingBeacons()
         
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        //create configuration session
         let configuration = ARWorldTrackingConfiguration()
         sceneView.session.run(configuration)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        //pause configuration session
         sceneView.session.pause()
     }
     
@@ -51,7 +51,7 @@ class SceneViewController: UIViewController, CLLocationManagerDelegate {
         // Dispose of any resources that can be recreated.
     }
     
-    //MARK: ARKIT specific methods to add objects
+    //MARK: ARKIT specific methods to add objects to the scene
     func addBox() -> Void {
         
         let box = SCNBox(width: 0.4, height: 0.4, length: 0.4, chamferRadius: 0.0)
@@ -101,6 +101,7 @@ class SceneViewController: UIViewController, CLLocationManagerDelegate {
         boxNode4.name = "TopImage"
         sceneView.pointOfView?.addChildNode(boxNode4)
         
+        //animate the nodes
         SCNTransaction.begin()
         SCNTransaction.animationDuration = 3
         boxNode1.position = SCNVector3(0,-0.4,-2)
@@ -122,7 +123,7 @@ class SceneViewController: UIViewController, CLLocationManagerDelegate {
         
     }
     
-    //MARK: scene tapped events
+    //MARK: scene tapped events to rotate
     func addTapToRotate() -> Void {
         
         let gestureToRotate = UIPanGestureRecognizer(target: self, action: #selector(sceneTappedToRotate(sender:)))
@@ -146,7 +147,9 @@ class SceneViewController: UIViewController, CLLocationManagerDelegate {
             derivedBox.width = 0.8
             derivedBox.length = 0.8
 
+            //display the front of the node even if rotated while expanding or collapsing
             tappedNode.rotation = SCNVector4Make(0, 0, 0, 0)
+            
             if tappedNode.name == "TopImage" {
                 tappedNode.position.y = 0.2
             }
@@ -154,6 +157,7 @@ class SceneViewController: UIViewController, CLLocationManagerDelegate {
                 tappedNode.position.y = -0.2
             }
             
+            //minimize the box
             if let exBox = expandedBox {
                 exBox.height = 0.4
                 exBox.width = 0.4
