@@ -9,7 +9,7 @@
 import UIKit
 import ARKit
 import CoreLocation
-
+import UserNotifications
 
 class SceneViewController: UIViewController, CLLocationManagerDelegate {
     
@@ -20,6 +20,7 @@ class SceneViewController: UIViewController, CLLocationManagerDelegate {
     var boxNode4 : SCNNode!
     var expandedBox : SCNBox!
     var locationManager : CLLocationManager!
+    var isMonitoring : Bool = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,11 +63,7 @@ class SceneViewController: UIViewController, CLLocationManagerDelegate {
         box.name = "Bottom"
         boxNode1 = SCNNode(geometry: box)
         boxNode1.position = SCNVector3(0,-0.8,-2)
-        /*let physicsBody = SCNPhysicsBody(
-            type: .kinematic,
-            shape: SCNPhysicsShape(geometry: SCNSphere(radius: 0.1))
-        )
-        boxNode1.physicsBody = physicsBody*/
+
         sceneView.pointOfView?.addChildNode(boxNode1)
         
         let box2 = SCNBox(width: 0.4, height: 0.4, length: 0.4, chamferRadius: 0.0)
@@ -110,12 +107,76 @@ class SceneViewController: UIViewController, CLLocationManagerDelegate {
         boxNode4.position = SCNVector3(0.0,0.3,-2.0)
         SCNTransaction.commit()
         
-        //sceneView.autoenablesDefaultLighting = true
-        //sceneView.allowsCameraControl = true
+        /*sceneView.autoenablesDefaultLighting = true
+         sceneView.allowsCameraControl = true*/
         
     }
     
-    //MARK: scene tapped events
+    //MARK: - Location manager Delegate methods
+    func locationManager(_ manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], in region: CLBeaconRegion) {
+        if beacons.count > 0 {
+            let beaconSelected = beacons[0]
+            switch beaconSelected.proximity {
+            case .near, .immediate, .far:
+                print("beacon region")
+                //stop ranging beacons once detected
+                locationManager.stopRangingBeacons(in: region)
+                
+                //Add Box, handle nodes tap and rotation
+                addBox()
+                addTap()
+                addTapToRotate()
+                
+            case .unknown:
+                print("unknown")
+            }
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
+        print("entered beacon region")
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
+        print("exited beacon region")
+        
+        //On exiting the beacon range, remove the added nodes from scene
+        removeExistingNodesOutOfRegion()
+        locationManager.stopMonitoring(for: region)
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if status == CLAuthorizationStatus.authorizedAlways {
+            if CLLocationManager.isMonitoringAvailable(for: CLBeaconRegion.self) {
+                if CLLocationManager.isRangingAvailable() {
+                    startRangingBeacons()
+                }
+            }
+        }
+    }
+    
+    //MARK: - methods to range beacon and act when find
+    func startRangingBeacons() {
+        //Specific UUID, Major, Minor has been given here - which the app is looking for
+        let UUIDparam = UUID(uuidString: "B9407F30-F5F8-466E-AFF9-25556B57FE6D")
+        let regionBeacon = CLBeaconRegion(proximityUUID: UUIDparam!, major: 1001, minor: 1, identifier: "B9407F30")
+        
+        locationManager.startMonitoring(for: regionBeacon)
+        locationManager.startRangingBeacons(in: regionBeacon)
+        
+    }
+    
+    func removeExistingNodesOutOfRegion() -> Void {
+        if boxNode4 != nil && boxNode3 != nil && boxNode2 != nil && boxNode1 != nil {
+            boxNode1.removeFromParentNode()
+            boxNode2.removeFromParentNode()
+            boxNode3.removeFromParentNode()
+            boxNode4.removeFromParentNode()
+        }
+    }
+    
+    //MARK: - Scene Tapped methods
+    //scene tapped events
     func addTap() -> Void {
         
         let gestureRec = UITapGestureRecognizer(target: self, action: #selector(sceneTapped(sender:)))
@@ -123,12 +184,35 @@ class SceneViewController: UIViewController, CLLocationManagerDelegate {
         
     }
     
-    //MARK: scene tapped events to rotate
+    //scene tapped events to rotate
     func addTapToRotate() -> Void {
         
         let gestureToRotate = UIPanGestureRecognizer(target: self, action: #selector(sceneTappedToRotate(sender:)))
         sceneView.addGestureRecognizer(gestureToRotate)
         
+    }
+    
+    @objc func sceneTappedToRotate(sender: UIPanGestureRecognizer) {
+        let sceneView = sender.view as! SCNView
+        let tapLoc = sender.location(in: sceneView)
+        let hitResults = sceneView.hitTest(tapLoc, options: [:])
+        if hitResults.count > 0 {
+            let translation = sender.translation(in: sender.view!)
+            
+            let transx = Float(translation.x)
+            let transy = Float(-translation.y)
+            let anglePan = sqrt(pow(transx,2)+pow(transy,2))*(Float)(Double.pi)/180.0
+            var rotVector = SCNVector4()
+            
+            rotVector.x = -transy
+            rotVector.y = transx
+            rotVector.z = 0
+            rotVector.w = anglePan
+            
+            let tapped = hitResults[0]
+            let tappedNode = tapped.node
+            tappedNode.rotation = rotVector
+        }
     }
     
     @objc func sceneTapped(sender:UIGestureRecognizer) {
@@ -146,7 +230,7 @@ class SceneViewController: UIViewController, CLLocationManagerDelegate {
             derivedBox.height = 0.8
             derivedBox.width = 0.8
             derivedBox.length = 0.8
-
+            
             //display the front of the node even if rotated while expanding or collapsing
             tappedNode.rotation = SCNVector4Make(0, 0, 0, 0)
             
@@ -173,88 +257,4 @@ class SceneViewController: UIViewController, CLLocationManagerDelegate {
             }
         }
     }
-    
-    //MARK: - Localtion manager Delegate methods
-    func locationManager(_ manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], in region: CLBeaconRegion) {
-        if beacons.count > 0 {
-            let beaconSelected = beacons[0]
-            switch beaconSelected.proximity {
-            case .near, .immediate, .far:
-                print("beacon region")
-                locationManager.stopRangingBeacons(in: region)
-                
-                addBox()
-                addTap()
-                addTapToRotate()
-                
-            case .unknown:
-                print("unknown")
-            }
-        }
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
-        print("entered beacon region")
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
-        print("exited beacon region")
-        
-        removeExistingNodesOutOfRegion()
-        locationManager.stopMonitoring(for: region)
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        if status == CLAuthorizationStatus.authorizedAlways {
-            if CLLocationManager.isMonitoringAvailable(for: CLBeaconRegion.self) {
-                if CLLocationManager.isRangingAvailable() {
-                    startRangingBeacons()
-                }
-            }
-        }
-    }
-    
-    //MARK: - methods to range beacon and act when find
-    func startRangingBeacons() {
-        let UUIDparam = UUID(uuidString: "B9407F30-F5F8-466E-AFF9-25556B57FE6D")
-        let regionBeacon = CLBeaconRegion(proximityUUID: UUIDparam!, major: 1001, minor: 1, identifier: "B9407F30")
-        
-        locationManager.startMonitoring(for: regionBeacon)
-        locationManager.startRangingBeacons(in: regionBeacon)
-        
-    }
-    
-    func removeExistingNodesOutOfRegion() -> Void {
-        if boxNode4 != nil && boxNode3 != nil && boxNode2 != nil && boxNode1 != nil {
-            boxNode1.removeFromParentNode()
-            boxNode2.removeFromParentNode()
-            boxNode3.removeFromParentNode()
-            boxNode4.removeFromParentNode()
-        }
-    }
-    
-    @objc func sceneTappedToRotate(sender: UIPanGestureRecognizer) {
-        let sceneView = sender.view as! SCNView
-        let tapLoc = sender.location(in: sceneView)
-        let hitResults = sceneView.hitTest(tapLoc, options: [:])
-        if hitResults.count > 0 {
-            let translation = sender.translation(in: sender.view!)
-            
-            let transx = Float(translation.x)
-            let transy = Float(-translation.y)
-            let anglePan = sqrt(pow(transx,2)+pow(transy,2))*(Float)(Double.pi)/180.0
-            var rotVector = SCNVector4()
-            
-            rotVector.x = -transy
-            rotVector.y = transx
-            rotVector.z = 0
-            rotVector.w = anglePan
-            
-            let tapped = hitResults[0]
-            let tappedNode = tapped.node
-            tappedNode.rotation = rotVector
-        }
-    }
-    
-    
 }

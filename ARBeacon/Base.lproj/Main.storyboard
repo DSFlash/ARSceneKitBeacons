@@ -29,7 +29,8 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CUT-rW-3xl">
-                                <rect key="frame" x="316.5" y="296" width="34" height="30"/>
+                                <rect key="frame" x="312.5" y="290" width="42" height="36"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <state key="normal" title="Start"/>
                                 <connections>
                                     <action selector="startRanging:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Yjj-pF-bEI"/>
